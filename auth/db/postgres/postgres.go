@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"log"
 	"net/url"
 	"os"
@@ -32,8 +34,8 @@ func SetupConnection() (*sql.DB, error) {
 
 	db, err := sql.Open("pgx", dsn.String())
 	if err != nil {
-		log.Printf("error trying to open a postgres connection ➜ %v \n", err)
-		return nil, err
+		log.Println("[error in SetupConnection]")
+		return nil, errors.New(fmt.Sprintf("error trying to open a postgres connection ➜ %v \n", err))
 	}
 
 	log.Println("connected to postgres instance successfully .. ")
