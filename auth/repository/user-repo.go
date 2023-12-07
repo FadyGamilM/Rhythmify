@@ -37,10 +37,10 @@ type PG_UserRepo struct {
 // GetByEmail implements core.UserRepo.
 // TODO => handle not found errors
 func (ur *PG_UserRepo) GetByEmail(ctx context.Context, email string) (*domain.User, error) {
-	user := new(domain.User)
-	if err := ur.db.DB.QueryRowContext(ctx, GET_USER_BY_EMAIL_QUERY, email, &user.Id, &user.Email, &user.HashedPassword); err != nil {
-		log.Println("[pg-user-rep (GetByEmail)]")
-		return nil, errors.New(fmt.Sprintf("error trying to get user by email ➜ %v", err))
+	user := &domain.User{}
+	if err := ur.db.DB.QueryRowContext(ctx, GET_USER_BY_EMAIL_QUERY, email).Scan(&user.Id, &user.Email, &user.HashedPassword); err != nil {
+		log.Println("[pg-user-rep (GetByEmail)] ➜ ", err.Error())
+		return nil, fmt.Errorf("error trying to get user by email ➜ %v", err)
 	}
 	return user, nil
 }

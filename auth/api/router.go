@@ -22,4 +22,5 @@ func NewHandler(us core.AuthService) *handler {
 func (h *handler) SetupEndpoints() {
 	api := h.Router.Group("/api/v1")
 	api.POST("/auth/signup", h.HandleSignup)
+	api.POST("/auth/login", h.HandleLogin)
 }

@@ -1,11 +1,10 @@
 package dtos
 
-type SignupReqDto struct {
+type LoginReqDto struct {
 	Email    string `json:"email" binding:"required,email"`
 	Password string `json:"password" binding:"required"`
 }
 
-type SignupResDto struct {
-	Id    int64  `json:"id"`
-	Email string `json:"email"`
+type LoginResDto struct {
+	Token string
 }
