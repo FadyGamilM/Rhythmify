@@ -1,22 +1,25 @@
 package api
 
-import "github.com/gin-gonic/gin"
+import (
+	"github.com/FadyGamilM/rhythmify/auth/core"
+	"github.com/gin-gonic/gin"
+)
 
 type handler struct {
-	Router *gin.Engine
+	Router      *gin.Engine
+	UserService core.AuthService
 }
 
 func newRouter() *gin.Engine {
 	return gin.Default()
 }
 
-func NewHandler() *handler {
+func NewHandler(us core.AuthService) *handler {
 	r := newRouter()
-	return &handler{Router: r}
+	return &handler{Router: r, UserService: us}
 }
 
 func (h *handler) SetupEndpoints() {
 	api := h.Router.Group("/api/v1")
-	api.GET("/health", HandleHealthCheck)
-	api.POST("/auth/login", HandleLogin)
+	api.POST("/auth/signup", h.HandleSignup)
 }

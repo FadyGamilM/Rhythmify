@@ -4,10 +4,18 @@ services:
   db:
     container_name: auth_db
     image: postgres:14
+    # build:
+      # dockerfile: db.dockerfile
     environment:
       - POSTGRES_HOST=0.0.0.0:5432
-      - POSTGRES_USER=auth_db_user
-      - POSTGRES_PASSWORD=auth_db_pass
-      - POSTGRES_SSLMODE=false
+      - POSTGRES_USER=auth_user
+      - POSTGRES_PASSWORD=auth123
+      - POSTGRES_SSLMODE=disable
+      - POSTGRES_DB=auth
     ports:
       - '5432:5432'
+    volumes:
+      - auth_db_data:/var/lib/postgresql/data
+
+volumes:
+  auth_db_data:

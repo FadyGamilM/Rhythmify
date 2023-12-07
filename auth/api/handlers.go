@@ -17,3 +17,4 @@ func HandleLogin(c *gin.Context) {
 		"data": "logged-in",
 	})
 }
+

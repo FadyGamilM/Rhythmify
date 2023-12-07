@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"errors"
 	"fmt"
 	"log"
 
@@ -12,7 +11,7 @@ func HashPassword(pass string) (string, error) {
 	hash, err := bcrypt.GenerateFromPassword([]byte(pass), bcrypt.DefaultCost)
 	if err != nil {
 		log.Printf("[utils (HashPassword)] \n ")
-		return "", errors.New(fmt.Sprintf("error trying to hash password ➜ %v", err))
+		return "", fmt.Errorf("error trying to hash password ➜ %v", err)
 	}
 
 	return string(hash), nil

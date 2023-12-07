@@ -3,11 +3,12 @@ package core
 import (
 	"context"
 
+	"github.com/FadyGamilM/rhythmify/auth/api/dtos"
 	"github.com/FadyGamilM/rhythmify/auth/domain"
 )
 
 type AuthService interface {
-	Signup(ctx context.Context, req interface{}) (res interface{}, err error)
+	Signup(ctx context.Context, req *dtos.SignupReqDto) (res *dtos.SignupResDto, err error)
 	Signin(ctx context.Context, req interface{}) (res interface{}, err error)
 	Signout(ctx context.Context, req interface{}) (res interface{}, err error)
 }

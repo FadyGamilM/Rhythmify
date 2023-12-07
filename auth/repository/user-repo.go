@@ -13,9 +13,9 @@ import (
 
 const (
 	INSERT_USER_QUERY = `
-		INSERT INTO users (email, hashed_password) 
-		VALUES ($1, $2) 
-		RETURNING id, email, hashed_password
+			INSERT INTO users (email, hashed_password) 
+			VALUES ($1, $2) 
+			RETURNING id, email, hashed_password
 	`
 
 	GET_USER_BY_ID_QUERY = `
@@ -31,7 +31,7 @@ const (
 )
 
 type PG_UserRepo struct {
-	db postgres.PG
+	db *postgres.PG
 }
 
 // GetByEmail implements core.UserRepo.
@@ -60,16 +60,16 @@ func (ur *PG_UserRepo) GetByID(ctx context.Context, id int) (*domain.User, error
 // Insert implements core.UserRepo.
 // TODO => handle duplicate and null-value-resource errors
 func (ur *PG_UserRepo) Insert(ctx context.Context, u domain.User) (*domain.User, error) {
-	user := new(domain.User)
+	user := &domain.User{}
 	if err := ur.db.DB.QueryRowContext(ctx, INSERT_USER_QUERY, u.Email, u.HashedPassword).Scan(&user.Id, &user.Email, &user.HashedPassword); err != nil {
-		log.Println("[pg-user-rep (Insert)]")
+		log.Println("[pg-user-rep (Insert)] ➜ ", err)
 		return nil, errors.New(fmt.Sprintf("error trying to insert new user ➜ %v", err))
 	}
 	return user, nil
 }
 
 // the factory return the port not the concrete implementation
-func NewPgUserRepo(db postgres.PG) core.UserRepo {
+func NewPgUserRepo(db *postgres.PG) core.UserRepo {
 	return &PG_UserRepo{
 		db: db,
 	}
