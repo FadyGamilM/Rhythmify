@@ -13,8 +13,12 @@ type AuthService interface {
 	Signout(ctx context.Context, req interface{}) (res interface{}, err error)
 }
 
+type UserService interface {
+	FindByID(ctx context.Context, id int64) (*domain.User, error)
+}
+
 type UserRepo interface {
 	Insert(context.Context, domain.User) (*domain.User, error)
-	GetByID(ctx context.Context, id int) (*domain.User, error)
+	GetByID(ctx context.Context, id int64) (*domain.User, error)
 	GetByEmail(ctx context.Context, email string) (*domain.User, error)
 }

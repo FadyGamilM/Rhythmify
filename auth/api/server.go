@@ -8,7 +8,7 @@ import (
 	"os"
 )
 
-func Server(h *handler) *http.Server {
+func Server(h *Handler) *http.Server {
 	port := os.Getenv("SERVER_PORT")
 	srv := &http.Server{
 		Addr:    fmt.Sprintf("0.0.0.0:%v", port),

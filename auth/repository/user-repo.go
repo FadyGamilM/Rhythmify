@@ -47,11 +47,11 @@ func (ur *PG_UserRepo) GetByEmail(ctx context.Context, email string) (*domain.Us
 
 // GetByID implements core.UserRepo.
 // TODO => handle not found errors
-func (ur *PG_UserRepo) GetByID(ctx context.Context, id int) (*domain.User, error) {
-	user := new(domain.User)
+func (ur *PG_UserRepo) GetByID(ctx context.Context, id int64) (*domain.User, error) {
+	user := &domain.User{}
 	if err := ur.db.DB.QueryRowContext(ctx, GET_USER_BY_ID_QUERY, id).Scan(&user.Id, &user.Email, &user.HashedPassword); err != nil {
 		log.Println("[pg-user-rep (GetByID)]")
-		return nil, errors.New(fmt.Sprintf("error trying to get user by id ➜ %v", err))
+		return nil, fmt.Errorf("error trying to get user by id ➜ %v", err)
 	}
 
 	return user, nil

@@ -5,6 +5,7 @@ import (
 	"log"
 
 	"github.com/FadyGamilM/rhythmify/auth/api"
+	"github.com/FadyGamilM/rhythmify/auth/business/auth"
 	"github.com/FadyGamilM/rhythmify/auth/business/user"
 	"github.com/FadyGamilM/rhythmify/auth/db/postgres"
 	"github.com/FadyGamilM/rhythmify/auth/initializer"
@@ -30,8 +31,9 @@ func init() {
 func main() {
 	postgresDB := postgres.NewPG(db)
 	userRepo := repository.NewPgUserRepo(postgresDB)
-	userService := user.NewUserAuthService(userRepo)
-	handlers := api.NewHandler(userService)
+	authService := auth.NewUserAuthService(userRepo)
+	userService := user.NewUserService(userRepo)
+	handlers := api.NewHandler(authService, userService)
 	handlers.SetupEndpoints()
 	server := api.Server(handlers)
 	api.Run(server)

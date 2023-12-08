@@ -8,7 +8,7 @@ import (
 	"github.com/gin-gonic/gin"
 )
 
-func (h *handler) HandleLogin(c *gin.Context) {
+func (h *Handler) HandleLogin(c *gin.Context) {
 	reqDto := new(dtos.LoginReqDto)
 	if err := c.ShouldBindJSON(reqDto); err != nil {
 		log.Printf("[handler (HandleLogin)] ➜ %v\n", err.Error())
@@ -18,7 +18,7 @@ func (h *handler) HandleLogin(c *gin.Context) {
 		return
 	}
 
-	result, err := h.UserService.Signin(c, reqDto)
+	result, err := h.AuthService.Signin(c, reqDto)
 	if err != nil {
 		if err != nil {
 			log.Printf("[handler (HandleSignup)] ➜ %v\n", err.Error())
