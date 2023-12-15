@@ -2,7 +2,6 @@ package api
 
 import (
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"time"
@@ -14,7 +13,6 @@ import (
 func (h *Handler) Auth(c *gin.Context) {
 	// get the cookie from the request
 	token, err := c.Cookie("Authorization")
-	log.Println("the token is -> ", token)
 	if err != nil {
 		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": "user not authenticated",
