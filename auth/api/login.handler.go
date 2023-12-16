@@ -34,5 +34,4 @@ func (h *Handler) HandleLogin(c *gin.Context) {
 	c.SetCookie("Authorization", result.Token, 3600*24, "", "", false, true)
 
 	c.JSON(http.StatusAccepted, gin.H{})
-	return
 }

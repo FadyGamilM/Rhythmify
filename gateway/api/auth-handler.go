@@ -76,3 +76,53 @@ func (h *Handler) HandleSignup(c *gin.Context) {
 		"response": signupResDto,
 	})
 }
+
+func (h *Handler) HandleLogin(c *gin.Context) {
+	loginReq := new(SignupReqDto)
+	if err := c.ShouldBindJSON(loginReq); err != nil {
+		c.JSON(http.StatusBadRequest, gin.H{
+			"error": "invalid request body",
+		})
+		return
+	}
+
+	reqBodyBytes, err := json.Marshal(loginReq)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error marshaling the request to send it to auth microservice",
+		})
+		return
+	}
+
+	authHost := os.Getenv("AUTH_HOST")
+	authPort := os.Getenv("AUTH_PORT")
+	authURI := os.Getenv("AUTH_URI")
+	loginEndpoint := fmt.Sprintf("%v/login", authURI)
+	loginResponse, err := CommunicateSync(authHost, authPort, loginEndpoint, "POST", reqBodyBytes)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "error during communication to auth microservice",
+		})
+		return
+	}
+	defer loginResponse.Body.Close()
+
+	// Extract the Authorization cookie from the response
+	cookies := loginResponse.Cookies()
+	token := ""
+	for _, cookie := range cookies {
+		if cookie.Name == "Authorization" {
+			token = cookie.Value
+			break
+		}
+	}
+
+	if token == "" {
+		c.JSON(http.StatusInternalServerError, gin.H{
+			"error": "did not receive token from auth microservice",
+		})
+		return
+	}
+
+	c.JSON(http.StatusAccepted, token)
+}
