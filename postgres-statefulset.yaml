@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-db-configs
+  namespace: rhythmify-namespace
+data:
+  key: value
+
+
+# PG_IDENT.CONF
+# -> map os user accounts to postgres user
+
+# PG_HBA.CONF
+# -> postgres firewal configration 
+
+# pOSTGRESQL.CONF
+# -> main conffiguration (customization)

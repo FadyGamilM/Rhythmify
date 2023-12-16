@@ -28,8 +28,8 @@ func (h *Handler) HandleSignup(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusCreated, gin.H{
-		"data": result,
-	})
+	log.Printf("singup request is completed with id : %v and email %v\n", result.Id, result.Email)
+
+	c.JSON(http.StatusCreated, result)
 	return
 }

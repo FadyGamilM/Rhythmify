@@ -1,0 +1,37 @@
+# The namesapce 
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: rhythmify-namespace
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: auth
+  namespace: rhythmify-namespace
+  labels:
+    app: auth
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: auth
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 3
+  template:
+    metadata:
+      labels:
+        app: auth
+    spec:
+      containers:
+      - name: auth
+        image: fadygamil/auth:latest
+        envFrom:
+        - configMapRef:
+            name: auth-configmap
+        - secretRef:
+            name: auth-secret
+        ports:
+        - containerPort: 3005

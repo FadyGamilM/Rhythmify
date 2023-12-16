@@ -1,0 +1,12 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: auth-configmap
+  namespace: rhythmify-namespace
+data:
+  SERVER_PORT: "3005"
+  POSTGRES_HOST: "postgres-service:5432"
+  POSTGRES_USER: "auth_user"
+  POSTGRES_SSLMODE: "disable"
+  POSTGRES_DB: "auth"
+
