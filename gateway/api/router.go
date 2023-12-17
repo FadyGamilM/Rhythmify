@@ -25,6 +25,7 @@ func (h *Handler) SetupEndpoints() {
 	gatewayApis := h.router.Group("/api/v1/gateway")
 	gatewayApis.POST("/auth/signup", h.HandleSignup)
 	gatewayApis.POST("/auth/login", h.HandleLogin)
+	gatewayApis.POST("/auth/validate", h.Authorize)
 	gatewayApis.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": "healthy",
