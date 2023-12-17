@@ -2,8 +2,10 @@ package api
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"net/http"
 
+	mongogridfs "github.com/FadyGamilM/rhythmify/gateway/mongo-gridfs"
 	"github.com/FadyGamilM/rhythmify/gateway/rabbitmq"
 	videoevents "github.com/FadyGamilM/rhythmify/gateway/video-events"
 	"github.com/gin-gonic/gin"
@@ -33,6 +35,18 @@ func (h *Handler) UploadVideo(c *gin.Context) {
 	defer openedFile.Close()
 
 	// ======== set to mongo fsgrid and after that configure and publish to rabbitmq
+	// Read the content of the video file into a byte slice
+	videoContent, err := ioutil.ReadAll(openedFile)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error reading video content"})
+		return
+	}
+
+	fileID, err := mongogridfs.UploadFile(h.mongoFS, file.Filename, videoContent)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "error uploading video content"})
+		return
+	}
 
 	// ======== rabbitmq connection
 	conn, err := rabbitmq.ConnectRabbitMQ("fady", "fady", "localhost:5672", "video_converter")
@@ -55,7 +69,7 @@ func (h *Handler) UploadVideo(c *gin.Context) {
 	userID, _ := c.MustGet("userId").(int64)
 	userEmail, _ := c.MustGet("email").(string)
 	EventMsg := videoevents.UploadVideoEvent{
-		VideoFileId: string(fileID),
+		VideoFileId: fileID.Hex(),
 		AudioFileId: "",
 		UserId:      userID,
 		Email:       userEmail,

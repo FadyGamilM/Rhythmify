@@ -4,6 +4,7 @@ import (
 	"log"
 
 	"github.com/FadyGamilM/rhythmify/gateway/api"
+	mongogridfs "github.com/FadyGamilM/rhythmify/gateway/mongo-gridfs"
 	"github.com/joho/godotenv"
 )
 
@@ -20,7 +21,11 @@ func loadEnv() {
 }
 
 func main() {
-	router := api.NewHandler()
+	gridFs, err := mongogridfs.Connect()
+	if err != nil {
+		log.Fatalf("couldn't connect to mongodb ... ")
+	}
+	router := api.NewHandler(gridFs)
 	router.SetupEndpoints()
 	server := api.Server(router)
 	api.Run(server)

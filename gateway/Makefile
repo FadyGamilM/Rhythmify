@@ -19,3 +19,5 @@ set-permissions:
 set-exchange-perms: 
 	docker exec rhythmify_rabbitmq rabbitmqctl set_topic_permissions -p customers percy customer_events "^customers.*" "^customers.*"
 
+mongo-up:
+	docker run -d -p 27017:27017 --name mongo_video mongo:latest

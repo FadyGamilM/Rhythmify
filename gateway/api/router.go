@@ -4,20 +4,23 @@ import (
 	"net/http"
 
 	"github.com/gin-gonic/gin"
+	"go.mongodb.org/mongo-driver/mongo/gridfs"
 )
 
 type Handler struct {
-	router *gin.Engine
+	router  *gin.Engine
+	mongoFS *gridfs.Bucket
 }
 
 func newRouter() *gin.Engine {
 	return gin.Default()
 }
 
-func NewHandler() *Handler {
+func NewHandler(gridFS *gridfs.Bucket) *Handler {
 	r := newRouter()
 	return &Handler{
-		router: r,
+		router:  r,
+		mongoFS: gridFS,
 	}
 }
 
@@ -26,7 +29,7 @@ func (h *Handler) SetupEndpoints() {
 	gatewayApis.POST("/auth/signup", h.HandleSignup)
 	gatewayApis.POST("/auth/login", h.HandleLogin)
 	gatewayApis.POST("/auth/validate", h.Authorize)
-	gatewayApis.POST("/video/upload", h.UploadVideo)
+	gatewayApis.POST("/video/upload", h.Authorize, h.UploadVideo)
 	gatewayApis.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": "healthy",
