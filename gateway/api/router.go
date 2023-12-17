@@ -26,6 +26,7 @@ func (h *Handler) SetupEndpoints() {
 	gatewayApis.POST("/auth/signup", h.HandleSignup)
 	gatewayApis.POST("/auth/login", h.HandleLogin)
 	gatewayApis.POST("/auth/validate", h.Authorize)
+	gatewayApis.POST("/video/upload", h.UploadVideo)
 	gatewayApis.GET("/health", func(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"response": "healthy",

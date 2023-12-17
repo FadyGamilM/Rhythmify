@@ -25,7 +25,7 @@ func (h *Handler) Authorize(c *gin.Context) {
 
 	// Check if the Authorization header is empty
 	if authHeader == "" {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": "Authorization header is missing",
 		})
 		return
@@ -35,7 +35,7 @@ func (h *Handler) Authorize(c *gin.Context) {
 	// We can split the header into a slice where the first element is "Bearer" and the second is the actual token
 	splitToken := strings.Split(authHeader, "Bearer ")
 	if len(splitToken) != 2 {
-		c.JSON(http.StatusUnauthorized, gin.H{
+		c.AbortWithStatusJSON(http.StatusUnauthorized, gin.H{
 			"error": "Invalid Authorization header format",
 		})
 		return
@@ -47,7 +47,7 @@ func (h *Handler) Authorize(c *gin.Context) {
 	tokenValidation := &TokenValidationDto{Token: token}
 	reqBodyBytes, err := json.Marshal(tokenValidation)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "error marshaling the request to send it to auth microservice",
 		})
 		return
@@ -59,7 +59,7 @@ func (h *Handler) Authorize(c *gin.Context) {
 	validateEndpoint := fmt.Sprintf("%v/validate", authURI)
 	validationResponse, err := CommunicateSync(authHost, authPort, validateEndpoint, "POST", reqBodyBytes)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "error during communication to auth microservice",
 		})
 		return
@@ -70,11 +70,15 @@ func (h *Handler) Authorize(c *gin.Context) {
 	resDto := new(TokenValidationResDto)
 	err = json.NewDecoder(validationResponse.Body).Decode(resDto)
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{
+		c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{
 			"error": "error decoding the response from auth microservice",
 		})
 		return
 	}
 
-	c.JSON(http.StatusOK, resDto)
+	// set the userid and user email in the request context
+	c.Set("userId", resDto.UserId)
+	c.Set("email", resDto.Email)
+
+	c.Next()
 }
