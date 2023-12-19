@@ -6,3 +6,9 @@ type UploadVideoEvent struct {
 	UserId      int64  `json:"user_id"`
 	Email       string `json:"email"`
 }
+
+type UploadeAudioEvent struct {
+	AudioFileId string `json:"audio_file_id"`
+	UserId      int64  `json:"user_id"`
+	Email       string `json:"email"`
+}
